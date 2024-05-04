@@ -1,0 +1,9 @@
+{
+  "use_yolo": 1,
+  "use_sma": 1,
+  "use_rsi": 0,
+  "trading_mode": 0,
+  "account_id_live": "your_live_account_id",
+  "account_id_demo": "your_demo_account_id",
+  "access_token": "f6e0e0226d7c8c6c885277f1603f38fb-7d09224ecbaaa0db1636036429cf781a"
+}

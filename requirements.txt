@@ -1,0 +1,8 @@
+pandas
+oandapyV20
+numpy
+matplotlib
+opencv-python
+ultralyticsplus
+ultralytics
+opencv-python-headless

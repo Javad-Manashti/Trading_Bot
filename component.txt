@@ -1,0 +1,193 @@
+Please read carefully codes and structures and send 'OK' and wait for the next prompt. 
+ 
+1- Tree of src folder: 
+Folder PATH listing for volume data
+Volume serial number is 25B5-03A0
+D:\ONEDRIVE\MYPROJECT\TRADEPILOT\TRADING_BOT\SRC
+|   analytics.py
+|   execution.py
+|   main.py
+|   market_data.py
+|   __init__.py
+|   
++---strategy
+|       strategy.py
+|       yolo_pattern.py
+|       __init__.py
+|       
+\---__pycache__
+        strategy.cpython-312.pyc
+        
+ 
+1- Tree of test folder: 
+Folder PATH listing for volume data
+Volume serial number is 25B5-03A0
+D:\ONEDRIVE\MYPROJECT\TRADEPILOT\TRADING_BOT\TESTS
+    test_strategy.py
+    __init__.py
+    
+No subfolders exist 
+
+ 
+1- Tree of config folder: 
+Folder PATH listing for volume data
+Volume serial number is 25B5-03A0
+D:\ONEDRIVE\MYPROJECT\TRADEPILOT\TRADING_BOT\CONFIG
+    config.json
+    
+No subfolders exist 
+
+ 
+2- Code of listed files: 
+ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\analytics.py 
+def calculate_metrics(trades):
+    wins = 0
+    total_pip_profit = 0
+    total_pip_loss = 0
+    
+    for buy_price, sell_price in trades:
+        pip_profit = (sell_price - buy_price) * 10000  # assuming EUR/USD pip size
+        if pip_profit > 0:
+            wins += 1
+            total_pip_profit += pip_profit
+        else:
+            total_pip_loss += abs(pip_profit)
+    
+    win_rate = (wins / len(trades)) * 100 if trades else 0
+    return win_rate, total_pip_profit, total_pip_loss------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\execution.py 
+import logging
+
+def execute_trades(api, df, symbol, account_id):
+    last_row = df.iloc[-1]
+    try:
+        if last_row['position'] == 1:
+            logging.info("Signal to BUY!")
+            api.order.market(accountID=account_id, instrument=symbol, units=100)
+        elif last_row['position'] == -1:
+            logging.info("Signal to SELL!")
+            api.order.market(accountID=account_id, instrument=symbol, units=-100)
+    except Exception as e:
+        logging.error(f"Failed to execute trade: {e}")------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\main.py 
+# src/main.py
+import json
+import pandas as pd
+from strategy import fetch_forex_data, simple_moving_average_strategy
+from strategy import sma, yolo_pattern
+
+def load_config():
+    with open('config/config.json', 'r') as file:
+        return json.load(file)
+
+def main():
+    config = load_config()
+    access_token = config['access_token']
+    granularity = 'M15'
+    instrument = 'EUR_USD'
+    prices = fetch_forex_data(access_token, '2012-01-01T00:00:00Z', '2018-02-18T00:00:00Z', granularity, instrument)
+
+    if config['use_sma']:
+        df = simple_moving_average_strategy(prices)
+        print(df.head())
+
+    if config['use_yolo']:
+        # Placeholder for YOLO-based market analysis
+        pass
+
+if __name__ == "__main__":
+    main()
+------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\market_data.py 
+import pandas as pd
+from oandapyV20 import API
+from oandapyV20.contrib.factories import InstrumentsCandlesFactory
+
+def fetch_forex_data(access_token, from_date, to_date, granularity, instrument):
+    client = API(access_token=access_token, environment="practice")
+    params = {
+        "granularity": granularity,
+        "from": from_date,
+        "to": to_date
+    }
+    data = []
+    for request in InstrumentsCandlesFactory(instrument=instrument, params=params):
+        response = client.request(request)
+        for candle in response.get('candles'):
+            rec = {
+                'time': candle.get('time')[0:19],
+                'complete': candle['complete'],
+                'open': float(candle['mid']['o']),
+                'high': float(candle['mid']['h']),
+                'low': float(candle['mid']['l']),
+                'close': float(candle['mid']['c']),
+                'volume': candle['volume'],
+            }
+            data.append(rec)
+    return pd.DataFrame(data)------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\__init__.py 
+# This file intentionally left blank------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\strategy\strategy.py 
+# src/strategy.py
+import pandas as pd
+from oandapyV20 import API
+from oandapyV20.contrib.factories import InstrumentsCandlesFactory
+
+def fetch_forex_data(access_token, from_date, to_date, granularity, instrument):
+    client = API(access_token=access_token, environment="practice")
+    params = {"granularity": granularity, "from": from_date, "to": to_date}
+    data = []
+    for request in InstrumentsCandlesFactory(instrument=instrument, params=params):
+        response = client.request(request)
+        for candle in response.get('candles'):
+            rec = {
+                'time': candle.get('time')[0:19],
+                'complete': candle['complete'],
+                'open': float(candle['mid']['o']),
+                'high': float(candle['mid']['h']),
+                'low': float(candle['mid']['l']),
+                'close': float(candle['mid']['c']),
+                'volume': candle['volume'],
+            }
+            data.append(rec)
+    return pd.DataFrame(data)
+
+def simple_moving_average_strategy(df):
+    df['SMA20'] = df['close'].rolling(window=20).mean()
+    df['SMA50'] = df['close'].rolling(window=50).mean()
+    df['signal'] = 0
+    df.loc[50:, 'signal'] = np.where(df['SMA20'][50:] > df['SMA50'][50:], 1, 0)
+    df['position'] = df['signal'].diff()
+    return df
+------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\strategy\yolo_pattern.py 
+# src\strategy\yolo_pattern.py
+import matplotlib.pyplot as plt
+import cv2
+from ultralytics import YOLO
+import pandas as pd
+
+def plot_candlestick_chart(data, filename='latest_chart.png'):
+    fig, ax = plt.subplots()
+    ax.plot(data['close'], label='Close Price')  # Simplified; for real use mplfinance to plot actual candlestick
+    plt.legend()
+    fig.savefig(filename)
+    plt.close(fig)
+
+def detect_patterns(image_path, model_path):
+    model = YOLO(model_path)
+    image = cv2.imread(image_path)
+    results = model(image)
+    return results
+
+def interpret_results(results, threshold=0.3):
+    signals = []
+    for result in results.xyxy[0]:  # Assuming results.xyxy contains detection
+        if result[4] >= threshold:  # Confidence threshold
+            label = result[5]  # Assuming 5th index is the class label
+            signals.append(label.item())
+    return signals
+------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\strategy\__init__.py 
+------------------ 
