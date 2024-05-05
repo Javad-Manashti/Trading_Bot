@@ -6,3 +6,4 @@ opencv-python
 ultralyticsplus
 ultralytics
 opencv-python-headless
+streamlit

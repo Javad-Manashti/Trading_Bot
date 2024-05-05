@@ -11,11 +11,21 @@ D:\ONEDRIVE\MYPROJECT\TRADEPILOT\TRADING_BOT\SRC
 |   __init__.py
 |   
 +---strategy
-|       strategy.py
-|       yolo_pattern.py
+|   |   strategy.py
+|   |   yolo_pattern.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           strategy.cpython-312.pyc
+|           yolo_pattern.cpython-312.pyc
+|           __init__.cpython-312.pyc
+|           
++---webapp
+|       app.py
 |       __init__.py
 |       
 \---__pycache__
+        market_data.cpython-312.pyc
         strategy.cpython-312.pyc
         
  
@@ -71,11 +81,12 @@ def execute_trades(api, df, symbol, account_id):
     except Exception as e:
         logging.error(f"Failed to execute trade: {e}")------------------ 
 D:\OneDrive\myproject\TradePilot\trading_bot\src\main.py 
-# src/main.py
+# trading_bot/src/main.py
 import json
 import pandas as pd
-from strategy import fetch_forex_data, simple_moving_average_strategy
-from strategy import sma, yolo_pattern
+import streamlit as st
+from src.strategy import fetch_forex_data, simple_moving_average_strategy
+from src.strategy import sma, yolo_pattern
 
 def load_config():
     with open('config/config.json', 'r') as file:
@@ -90,7 +101,7 @@ def main():
 
     if config['use_sma']:
         df = simple_moving_average_strategy(prices)
-        print(df.head())
+        st.line_chart(df[['close', 'SMA20', 'SMA50']])
 
     if config['use_yolo']:
         # Placeholder for YOLO-based market analysis
@@ -129,8 +140,9 @@ def fetch_forex_data(access_token, from_date, to_date, granularity, instrument):
 D:\OneDrive\myproject\TradePilot\trading_bot\src\__init__.py 
 # This file intentionally left blank------------------ 
 D:\OneDrive\myproject\TradePilot\trading_bot\src\strategy\strategy.py 
-# src/strategy.py
+# src\strategy\strategy.py
 import pandas as pd
+import numpy as np
 from oandapyV20 import API
 from oandapyV20.contrib.factories import InstrumentsCandlesFactory
 
@@ -167,6 +179,7 @@ import matplotlib.pyplot as plt
 import cv2
 from ultralytics import YOLO
 import pandas as pd
+from ultralyticsplus import YOLO, render_result
 
 def plot_candlestick_chart(data, filename='latest_chart.png'):
     fig, ax = plt.subplots()
@@ -181,6 +194,7 @@ def detect_patterns(image_path, model_path):
     results = model(image)
     return results
 
+
 def interpret_results(results, threshold=0.3):
     signals = []
     for result in results.xyxy[0]:  # Assuming results.xyxy contains detection
@@ -190,4 +204,54 @@ def interpret_results(results, threshold=0.3):
     return signals
 ------------------ 
 D:\OneDrive\myproject\TradePilot\trading_bot\src\strategy\__init__.py 
+------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\webapp\app.py 
+# trading_bot/webapp/app.py
+import streamlit as st
+
+def main():
+    st.title("Forex Trading Signals Dashboard")
+
+    # Placeholder for connecting to Oanda and fetching data
+    st.write("Connect to Oanda and fetch data")
+
+    # Placeholder for displaying EUR/USD graph
+    st.write("EUR/USD Price Chart")
+
+    # Placeholder for YOLO analysis
+    st.write("YOLO Analysis")
+
+    # Placeholder for additional analysis and setting position
+    st.write("Additional Analysis and Position Setting")
+
+    # Placeholder for left menu and displaying charts for other pairs
+    st.write("Left Menu and Pair Analysis")
+
+if __name__ == "__main__":
+    main()
+------------------ 
+D:\OneDrive\myproject\TradePilot\trading_bot\src\webapp\__init__.py 
+# trading_bot/webapp/app.py
+import streamlit as st
+
+def main():
+    st.title("Forex Trading Signals Dashboard")
+
+    # Placeholder for connecting to Oanda and fetching data
+    st.write("Connect to Oanda and fetch data")
+
+    # Placeholder for displaying EUR/USD graph
+    st.write("EUR/USD Price Chart")
+
+    # Placeholder for YOLO analysis
+    st.write("YOLO Analysis")
+
+    # Placeholder for additional analysis and setting position
+    st.write("Additional Analysis and Position Setting")
+
+    # Placeholder for left menu and displaying charts for other pairs
+    st.write("Left Menu and Pair Analysis")
+
+if __name__ == "__main__":
+    main()
 ------------------ 

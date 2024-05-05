@@ -9,6 +9,10 @@ This trading bot is designed to automate forex trading using various strategies 
 - Support for both demo and live trading modes.
 - Comprehensive logging and monitoring of trading activities.
 
+# run
+streamlit run webapp/app.py
+
+
 ## Installation
 
 ### Prerequisites
