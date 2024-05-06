@@ -12,6 +12,9 @@ This trading bot is designed to automate forex trading using various strategies 
 # run
 streamlit run webapp/app.py
 
+#run on Linux on 0.0.0.0
+ 
+streamlit run src/webapp/app.py --server.port 8501 --server.headless true --server.enableCORS false --server.enableWebsocketCompression false --server.address 0.0.0.0
 
 ## Installation
 

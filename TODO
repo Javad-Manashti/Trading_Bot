@@ -1,3 +1,10 @@
+# TODO using tmux,  nohup, or Systemd Service
+1-Option 1: Using tmux
+tmux is a terminal multiplexer that allows you to run multiple terminal sessions persistently.
+2-Option 2: Using nohup
+nohup runs commands without hanging up when the terminal closes.
+3-Option 3: Using Systemd Service
+Create a Systemd service to ensure the Streamlit app starts automatically on boot and runs in the background.
 # TODO Add other pattern detector
 1- https://medium.com/automation-generation/algorithmically-detecting-and-trading-technical-chart-patterns-with-python-c577b3a396ed
 
@@ -6,3 +13,12 @@ https://github.com/BennyThadikaran/stock-pattern
 2- https://github.com/SpiralDevelopment/candlestick-patterns
 
 3- 
+
+
+# TODO check and test yolo analysis
+# TODO update chart to fast and optimize and intractive data show
+# TODO test set order with SL and Tp 
+# TODO Add order page to show the list of order with analysis and statistic of open, and close and total order
+# TODO add backtest section
+# TODO Add order management methods
+# TODO Add llm analyser to confirm order or manage orders
