@@ -1,28 +1,24 @@
-# src\strategy\yolo_pattern.py
+# trading_bot/src/strategy/yolo_pattern.py
 import matplotlib.pyplot as plt
-import cv2
-from ultralytics import YOLO
-import pandas as pd
+import mplfinance as mpf
 from ultralyticsplus import YOLO, render_result
+import pandas as pd
 
-def plot_candlestick_chart(data, filename='latest_chart.png'):
-    fig, ax = plt.subplots()
-    ax.plot(data['close'], label='Close Price')  # Simplified; for real use mplfinance to plot actual candlestick
-    plt.legend()
-    fig.savefig(filename)
-    plt.close(fig)
+def plot_candlestick_chart(df, filename='latest_chart.png'):
+    df.index = pd.to_datetime(df['time'])
+    df = df[['open', 'high', 'low', 'close', 'volume']]
+    mpf.plot(df, type='candle', volume=True, style='charles', savefig=filename)
 
-def detect_patterns(image_path, model_path):
+def detect_patterns(image_path, model_path='foduucom/stockmarket-pattern-detection-yolov8'):
     model = YOLO(model_path)
-    image = cv2.imread(image_path)
-    results = model(image)
+    results = model.predict(source=image_path)
     return results
-
 
 def interpret_results(results, threshold=0.3):
     signals = []
-    for result in results.xyxy[0]:  # Assuming results.xyxy contains detection
-        if result[4] >= threshold:  # Confidence threshold
-            label = result[5]  # Assuming 5th index is the class label
-            signals.append(label.item())
+    for result in results:
+        for detection in result.boxes:
+            if detection.conf >= threshold:
+                label = detection.cls.item()
+                signals.append(label)
     return signals

@@ -2,8 +2,9 @@
 import json
 import pandas as pd
 import streamlit as st
-from src.strategy import fetch_forex_data, simple_moving_average_strategy
-from src.strategy import sma, yolo_pattern
+from src.market_data.market_data import fetch_forex_data
+from src.strategy.strategy import simple_moving_average_strategy
+from src.strategy.yolo_pattern import detect_patterns, interpret_results
 
 def load_config():
     with open('config/config.json', 'r') as file:

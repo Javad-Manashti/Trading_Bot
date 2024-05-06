@@ -1,6 +1,11 @@
+# trading_bot/src/market_data/market_data.py
 import pandas as pd
 from oandapyV20 import API
 from oandapyV20.contrib.factories import InstrumentsCandlesFactory
+import logging
+
+# Suppress oandapyV20 logging
+logging.getLogger("oandapyV20").setLevel(logging.ERROR)
 
 def fetch_forex_data(access_token, from_date, to_date, granularity, instrument):
     client = API(access_token=access_token, environment="practice")

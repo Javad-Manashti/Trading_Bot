@@ -5,5 +5,7 @@
   "trading_mode": 0,
   "account_id_live": "your_live_account_id",
   "account_id_demo": "your_demo_account_id",
-  "access_token": ""
+  "access_token": "f6e0e0226d7c8c6c885277f1603f38fb-7d09224ecbaaa0db1636036429cf781a",
+  "pairs": ["EUR_USD", "GBP_USD", "USD_JPY", "AUD_USD", "USD_CHF", "USD_CAD", "NZD_USD", "EUR_GBP", "EUR_JPY", "GBP_JPY"]
+
 }

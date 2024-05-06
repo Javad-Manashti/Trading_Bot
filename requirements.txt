@@ -7,3 +7,6 @@ ultralyticsplus
 ultralytics
 opencv-python-headless
 streamlit
+ultralytics==8.0.43
+ultralyticsplus==0.0.28
+mplfinance
